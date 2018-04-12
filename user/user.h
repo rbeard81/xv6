@@ -1,3 +1,7 @@
+typedef struct
+{
+	uint locked;
+}lock_t;
 #ifndef _USER_H_
 #define _USER_H_
 
@@ -25,7 +29,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
-
+int clone(void(*fcn)(void*), void*, void*);
+int join(void**);
 // user library functions (ulib.c)
 int stat(char*, struct stat*);
 char* strcpy(char*, char*);
@@ -39,6 +44,10 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
-
+int thread_create(void (start_routine)(void*), void*);
+int thread_join();
+void lock_acquire(lock_t*);
+void lock_release(lock_t*);
+void lock_init(lock_t*);
 #endif // _USER_H_
 
