@@ -141,6 +141,13 @@ growproc(int n)
       return -1;
   }
   proc->sz = sz;
+	 acquire(&ptable.lock);
+  struct proc *p;
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    if (p->parent == proc && p->pgdir == proc->pgdir)
+      p->sz = proc->sz;
+  release(&ptable.lock)
+	  
   switchuvm(proc);
   return 0;
 }
@@ -564,42 +571,4 @@ procdump(void)
   }
 }
 
-int pstatus(){
-	struct proc *p;
-	
-	sti();
-	
-	acquire(&ptable.lock);
-	
-	cprintf("\nname \t pid \t state \t tickets \tcputime \n");
-	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-		if(p->state == SLEEPING)
-			cprintf("%s \t %d \t SLEEPING \t %d \t %d\n ", p->name, p->pid, p->tickets, p->cputime);
-		else if(p->state == RUNNING)
-			cprintf("%s \t %d \t RUNNING \t %d \t %d\n ", p->name, p->pid, p->tickets, p->cputime);
-		else if(p->state == RUNNABLE)
-			cprintf("%s \t %d \t RUNNABLE \t %d \t %d\n ", p->name, p->pid, p->tickets, p->cputime);
-	}
-	
-	release(&ptable.lock);
-	
-	return 22;
-
-}
-int settickets(int ntx){
-	int numtix;
-	argint(0, &numtix);
-	struct proc *p;
-	
-	acquire(&ptable.lock);
-		for(p= ptable.proc; p< &ptable.proc[NPROC]; p++){
-		if(p->pid == sys_getpid()){
-				p->tickets = numtix;
-				release(&ptable.lock);
-				break;
-				}
-		}		
-	}
-	
-	
 
