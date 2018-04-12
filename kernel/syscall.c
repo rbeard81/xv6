@@ -8,8 +8,6 @@
 #include "sysfunc.h"
 
 
-int sys_pstatus();
-int sys_settickets(int);
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
 // Arguments on the stack, from the user call to the C
@@ -106,8 +104,8 @@ static int (*syscalls[])(void) = {
 [SYS_wait]    sys_wait,
 [SYS_write]   sys_write,
 [SYS_uptime]  sys_uptime,
-[SYS_pstatus]	sys_pstatus,
-[SYS_settickets] sys_settickets,
+[SYS_clone]   sys_clone,
+[SYS_join]    sys_join,
 };
 
 // Called on a syscall trap. Checks that the syscall number (passed via eax)
