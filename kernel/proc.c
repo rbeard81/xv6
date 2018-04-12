@@ -23,23 +23,7 @@ static void wakeup1(void *chan);
 //==============================================
 static unsigned long int next = 1;
 
-int rand( void )
-{
-    next = next * 1103515245 + 12345;
-    return (unsigned int)(next / 65536) % 32768;
-}
 
-void srand(unsigned int seed )
-{
-	next = seed;
-}
-
-
-int maxrand(int max)
-{
-	next = next * 1103515245 + 12345;
-	return (unsigned int)(next / 65536) % (max+1);	
-}
 //==================================================
 void
 pinit(void)
@@ -220,6 +204,8 @@ exit(void)
 
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	if(p->parent == proc && p->pgdir == proc->pgdir)
++       proc->pgdir = copyuvm(p->pgdir, p->sz);
     if(p->parent == proc){
       p->parent = initproc;
       if(p->state == ZOMBIE)
@@ -246,7 +232,7 @@ wait(void)
     // Scan through table looking for zombie children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != proc)
+        if(p->parent != proc || p->pgdir == proc->pgdir)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
@@ -570,5 +556,5 @@ procdump(void)
     cprintf("\n");
   }
 }
-
+      if(p->parent != proc || p->pgdir == proc->pgdir)
 
