@@ -1,5 +1,3 @@
-@@ -23,5 +23,7 @@
-
 #ifndef _SYSCALL_H_
 #define _SYSCALL_H_
 
